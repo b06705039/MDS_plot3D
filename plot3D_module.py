@@ -35,7 +35,7 @@ class ThreeD_plot:
                     range_column = int(range_i/2)+1
                     if(range_list[range_i]>float(self.box_df.iloc[j,range_column][0]) \
                        and range_list[range_i]<float(self.box_df.iloc[j,range_column][1])):
-                        print("Not available: start posision_{}, xyz_length_{}".format(position,length))
+                        print("Unavailable: start posision_{}, xyz_length_{}".format(position,length))
                         return None
         
         # start to add box
