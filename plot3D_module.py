@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from itertools import count
+plt.style.use('seaborn')
 
 
 
@@ -11,21 +12,24 @@ class ThreeD_plot:
         self.fig = plt.figure()
         self.ax = self.fig.gca(projection='3d')
 
-        self.ax.set_xlabel('X')
-        self.ax.set_ylabel('Y')
-        self.ax.set_zlabel('Z')
         self.x_size = x_size
         self.y_size = y_size
         self.z_size = z_size
+
+        self.ax.set_xlim(0, x_size)
+        self.ax.set_ylim(y_size,0)
+        self.ax.set_zlim(0, z_size)
+        self.ax.set_xlabel('Y axis')
+        self.ax.set_ylabel('X axis')
+        self.ax.set_zlabel('Z axis')
         
         self.index = count()
-        
         self.box_df = pd.DataFrame(columns=['box_id','x_range','y_range','z_range','color'])
 
     
         
     def add_box_another(self, position, length):
-        x_range, y_range, z_range = zip(position,[position[i]+length[i] for i in range(3)])
+        y_range, x_range, z_range = zip(position,[position[i]+length[i] for i in range(3)])
         
         # check if available to add
         range_list = np.concatenate((x_range, y_range, z_range),axis=None)
@@ -73,8 +77,8 @@ class ThreeD_plot:
 
 
 # initialize with big box size
-my_3d = ThreeD_plot(100, 100, 100)
-my_3d.add_box_another((-1,-1,-0.5),(1,2,1))
-my_3d.add_box_another((0,-1,0), (1,2,0.5))
-my_3d.add_box_another((0,-1,-0.5), (1,2,1))
-my_3d.show()
+# my_3d = ThreeD_plot(100, 100, 100)
+# my_3d.add_box_another((-1,-1,-0.5),(1,2,1))
+# my_3d.add_box_another((0,-1,0), (1,2,0.5))
+# my_3d.add_box_another((0,-1,-0.5), (1,2,1))
+# my_3d.show()
