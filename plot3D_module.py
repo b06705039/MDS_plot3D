@@ -23,29 +23,32 @@ class ThreeD_plot:
         self.ax.set_ylabel('X axis')
         self.ax.set_zlabel('Z axis')
         
-        self.index = count()
+        self.index = 0
         self.box_df = pd.DataFrame(columns=['box_id','x_range','y_range','z_range','color'])
 
     
         
     def add_box_another(self, position, length):
         y_range, x_range, z_range = zip(position,[position[i]+length[i] for i in range(3)])
-        
+
         # check if available to add
         range_list = np.concatenate((x_range, y_range, z_range),axis=None)
+        unavailable_num = 0
+        print(self.box_df)
         for i in range(2):
             for j in range(len(self.box_df)):
                 for range_i in range(len(range_list)):
                     range_column = int(range_i/2)+1
                     if(range_list[range_i]>float(self.box_df.iloc[j,range_column][0]) \
                        and range_list[range_i]<float(self.box_df.iloc[j,range_column][1])):
-                        print("Unavailable: start posision_{}, xyz_length_{}".format(position,length))
-                        return None
+                        unavailable_num += 1
+        if unavailable_num > 4:
+            print("Unavailable: start posision_{}, xyz_length_{}".format(position,length))
+            return None
         
         # start to add box
         color = np.random.rand(3,)
-
-        xx, yy, zz = np.meshgrid(x_range, y_range, z_range)
+        xx, yy, zz = np.meshgrid(x_range, y_range, z_range) 
         self.ax.plot_wireframe(xx[0], yy[0], zz[0], color=color)
         self.ax.plot_wireframe(xx[1], yy[1], zz[1], color=color)
         self.ax.plot_surface(xx[0], yy[0], zz[0], color=color, alpha=0.2)
@@ -66,6 +69,7 @@ class ThreeD_plot:
         new_s = {'box_id':self.index, 'x_range':x_range,'y_range':y_range,'z_range':z_range,'color':color}
         self.box_df = self.box_df.append(new_s, ignore_index=True)
         
+        self.index += 1
         
         
     def show(self):

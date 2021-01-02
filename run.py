@@ -1,8 +1,22 @@
 import plot3D_module as plot3d
 
+containers = [[ [(43.0, 0.0, 0.0), (55.0, 98.0, 66.0)],
+                [(0.0, 0.0, 0.0), (43.0, 99.0, 75.0)]],
+              [ [(0.0, 15.0, 0.0), (74.0, 85.0, 55.0)],
+                [(0.0, 10.0, 0.0), (81.0, 5.0, 87.0)]],
+              [ [(0.0, 1.0, 70.0), (91.0, 76.0, 30.0)],
+                [(0.0, 0.0, 0.0), (84.0, 93.0, 46.0)],
+                [(0.0, 0.0, 97.0), (86.0, 94.0, 3.0)]],
+                [],
+              [ [(0.0, 0.0, 25.0), (98.0, 81.0, 75.0)],
+                [(0.0, 9.0, 0.0), (84.0, 91.0, 20.0)],
+                [(0.0, 0.0, 0.0), (67.0, 1.0, 81.0)]]]
 
-# initialize with big box size
-my_3d = plot3d.ThreeD_plot(100, 100, 100)
-my_3d.add_box_another((0.0, 0.0, 0.0),(77.0, 87.0, 48.0))
-# if the box is overlap with the other, print(Unavailable: position{}, xyz_length{})
-my_3d.show()
+for container in containers:
+    my_3d = plot3d.ThreeD_plot(100, 100, 100)
+    for box in container:
+        pos = box[0]
+        size = box[1]
+        my_3d.add_box_another(pos, size)
+    my_3d.show()
+
