@@ -24,28 +24,19 @@ class ThreeD_plot:
         self.ax.set_zlabel('Z axis')
         
         self.index = 0
-        self.box_df = pd.DataFrame(columns=['box_id','x_range','y_range','z_range','color'])
+        self.box_df = pd.DataFrame(columns=['box_id','position','length','color'])
 
     
         
+    
     def add_box_another(self, position, length):
-        y_range, x_range, z_range = zip(position,[position[i]+length[i] for i in range(3)])
-
-        # check if available to add
-        range_list = np.concatenate((x_range, y_range, z_range),axis=None)
-        unavailable_num = 0
-        print(self.box_df)
-        for i in range(2):
-            for j in range(len(self.box_df)):
-                for range_i in range(len(range_list)):
-                    range_column = int(range_i/2)+1
-                    if(range_list[range_i]>float(self.box_df.iloc[j,range_column][0]) \
-                       and range_list[range_i]<float(self.box_df.iloc[j,range_column][1])):
-                        unavailable_num += 1
-        if unavailable_num > 4:
-            print("Unavailable: start posision_{}, xyz_length_{}".format(position,length))
-            return None
+        position = np.array(list(position))
+        length = np.array(list(length))
         
+        if(self.checkIfOverlap(position, length)):
+            return
+    
+        y_range, x_range, z_range = zip(position,[position[i]+length[i] for i in range(3)])
         # start to add box
         color = np.random.rand(3,)
         xx, yy, zz = np.meshgrid(x_range, y_range, z_range) 
@@ -66,10 +57,34 @@ class ThreeD_plot:
         self.ax.plot_surface(xx[0], yy[0], zz[0], color=color, alpha=0.2)
         self.ax.plot_surface(xx[1], yy[1], zz[1], color=color, alpha=0.2)
         
-        new_s = {'box_id':self.index, 'x_range':x_range,'y_range':y_range,'z_range':z_range,'color':color}
+        new_s = {'box_id':self.index, 'position':position, 'length':length, 'color':color}
         self.box_df = self.box_df.append(new_s, ignore_index=True)
         
         self.index += 1
+        
+    def checkIfOverlap(self, position, length):
+        y_position = position
+        y_length = length
+        for box_i in range(len(self.box_df)):
+            
+            x_position = self.box_df.iloc[box_i,1]
+            x_length = self.box_df.iloc[box_i,2]
+        
+            proj_y0 = y_position - x_position - x_length
+            proj_y1 = y_position + y_length - x_position - x_length
+
+            for axis in [[1,0,0],[0,1,0],[0,0,1]]:
+                x_vec = x_length * np.array(axis)
+                proj = self.project(proj_y0,x_vec) * self.project(proj_y1,x_vec)
+                if(proj>1):
+                    return 0
+                elif(axis == [0,0,1]):
+                    print('<overlap> x: {}, y: {} in {}'.format([x_position,x_length],[y_position,y_length],axis))
+                    return 1
+
+        
+    def project(self, y, x):
+        return np.dot(y, x)/np.sqrt(sum((x)**2)) **2
         
         
     def show(self):
